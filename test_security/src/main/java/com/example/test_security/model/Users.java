@@ -1,8 +1,6 @@
 package com.example.test_security.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,9 +24,9 @@ import java.util.List;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Users implements UserDetails, Principal {
-
+                                                            //Step 1
     @Id
-    private Integer Roll;
+    private Integer roll;
     private String firstName;
     private String lastName;
     private String username;
@@ -37,7 +35,7 @@ public class Users implements UserDetails, Principal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role));
+        return Collections.singleton(new SimpleGrantedAuthority(role));     //returns Authority type. use hasAuthority in filterChain
     }
 
     @Override

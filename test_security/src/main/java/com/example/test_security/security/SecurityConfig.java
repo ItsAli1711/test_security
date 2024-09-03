@@ -18,7 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor                      //this helps us Constructor inject by declaring the object as private final
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -31,30 +31,28 @@ public class SecurityConfig {
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/home").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/reg").permitAll()
-                        .requestMatchers("/admin").hasRole("ADMIN")
+                .authorizeHttpRequests(req -> req.requestMatchers("/home","/reg").permitAll()
+                        .requestMatchers("/admin").hasAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
-                //.sessionManagement(ses -> ses.sessionCreationPolicy(STATELESS))
-                .authenticationProvider(authenticationProvider());
+                //.sessionManagement(ses -> ses.sessionCreationPolicy(STATELESS))     //Enable this only when jwt is implemented
+                .authenticationProvider(authenticationProvider());        // we define our authorization provider for the security
         return http.build();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider()
+    public AuthenticationProvider authenticationProvider()     //we use a DaoAuthentication Provider.
     {
         DaoAuthenticationProvider authprovider = new DaoAuthenticationProvider();
-        authprovider.setPasswordEncoder(passwordEncoder());
-        authprovider.setUserDetailsService(userDetailsService);
+        authprovider.setPasswordEncoder(passwordEncoder());            //set password encoder type,the password field user enters,is encoded using this encoder
+        authprovider.setUserDetailsService(userDetailsService);        //define out UserDetailsService
         return authprovider;
     }
 
     @Bean
     PasswordEncoder passwordEncoder()
     {
-        return new BCryptPasswordEncoder(12);
+        return new BCryptPasswordEncoder(12);                                   //this the encoder we will use
     }
-
 }

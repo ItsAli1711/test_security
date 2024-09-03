@@ -33,14 +33,14 @@ public class CurrentController {
         return "Welcome regh";
     }
 
-    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
     private final UsersService usersService;
+
     @PostMapping("/reg")
     @ResponseBody
     public Users Register(@RequestBody Users user)
     {
-        user.setPassword(encoder.encode(user.getPassword()));
-        usersService.save(user);
+        usersService.register(user);
         return user;
     }
 }
